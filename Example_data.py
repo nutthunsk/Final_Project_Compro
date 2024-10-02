@@ -7,7 +7,27 @@ import struct, os
 def create_records(file):
 
     with open(file, "wb") as file:
-        pass
+        count = 0
+        try:
+              count = int(input("How record to create?: "))
+        except ValueError as e:
+              print(f"Error: {e}")
+        except Exception as e:
+              print(f"Error: {e}")
+        else:
+                for i in range(count):
+                        try:
+                                print(f"Number #{count +1}")
+
+                        except ValueError as e:
+                                print(f"Error: {e}")
+                                break
+                        except Exception as e:
+                                print(f"Error: {e}")
+                                break
+
+                        else:
+                              pass
 
 #Add
 def add_records(file):
