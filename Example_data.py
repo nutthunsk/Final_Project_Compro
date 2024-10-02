@@ -49,7 +49,7 @@ def delete_record(file):
         else:
                 q = input("Confirm type (Yes,No): ")
                 if q.lower() == "yes":
-                        os.remove(filePath)
-                        print(f"{filePath} Removed!!")
+                        os.remove(file)
+                        print(f"{file} Removed!!")
                 else:
                         print("Removing has been Stoped!!")
