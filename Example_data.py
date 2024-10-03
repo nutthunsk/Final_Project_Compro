@@ -41,9 +41,18 @@ def create_records(file):
 
 #Add
 def add_records(file):
-
-    with open(file, "ab") as file:
-        pass
+    check = os.path.exists(file)
+    if check != True:
+          print("Error: File Not Found!")
+    else:
+          with open(file, "ab") as file:
+                count = 0
+                try:
+                        count = int(input("How record to create?: "))
+                except ValueError as e:
+                        print(f"Error: {e}")
+                except Exception as e:
+                        print(f"Error: {e}")
 
 #Edit
 def edit_record(file):
