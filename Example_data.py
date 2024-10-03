@@ -18,6 +18,10 @@ def create_records(file):
                 for i in range(count):
                         try:
                                 print(f"Number #{count +1}")
+                                name = input("Name: ")
+                                category = input("Category: ")
+                                quantity_purchase = float(input("Quantity_purchase: "))
+
 
                         except ValueError as e:
                                 print(f"Error: {e}")
