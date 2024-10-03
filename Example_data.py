@@ -1,6 +1,6 @@
 import struct, os
 """
-[category, name, amount, data, balance, price]
+[name, category, quantity_purchase, lasted_purchase_price, lasted_date, price]
 """
 
 #Create
