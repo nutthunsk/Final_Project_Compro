@@ -21,9 +21,9 @@ def create_records(file):
                                 name = input("Name: ")
                                 category = input("Category: ")
                                 quantity_purchase = float(input("Quantity_purchase: "))
-                                lasted_purchase_price = input()
-                                lasted_date = input()
-                                price = input()
+                                lasted_purchase_price = float(input("Lasted Purchase Price: "))
+                                lasted_date = int(input("Lasted Date: "))
+                                price = float(input("Price: "))
 
                         except ValueError as e:
                                 print(f"Error: {e}")
@@ -33,7 +33,11 @@ def create_records(file):
                                 break
 
                         else:
-                              pass
+                              data = struct.pack("i20si20sf", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price,  lasted_date, price)
+                              file.write(data)
+                              count += 1
+                              break
+                print(f"Done! {count}")
 
 #Add
 def add_records(file):
