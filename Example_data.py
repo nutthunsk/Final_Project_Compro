@@ -21,7 +21,9 @@ def create_records(file):
                                 name = input("Name: ")
                                 category = input("Category: ")
                                 quantity_purchase = float(input("Quantity_purchase: "))
-
+                                lasted_purchase_price = input()
+                                lasted_date = input()
+                                price = input()
 
                         except ValueError as e:
                                 print(f"Error: {e}")
