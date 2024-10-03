@@ -101,9 +101,36 @@ def read_records(file) ->str:
 
 #Find
 def find_records(file) ->str:
+    check = os.path.exists(file)
+    if check != True:
+        print("Error: File Not File!")
+    else:
+        find = input("Which record are you looking for? (name, category, quantity_purchase, lasted_purchase_price, lasted_date, price)")
+        print("Result: ")
+        record = {}
+        count = 1
+        vv = 0        
 
-    with open(file, "rb") as file:
-        pass
+        with open(file, "rb") as file:
+                while True:
+                      record = file.read(struct.calcsize("i20si20sf"))
+                      if not record:
+                            break
+                      else:
+                        record = struct.unpack("i20si20sf", record)
+                        record = record[0].decode(), record[1].decode(), record[3], record[4], record[5]
+                        record[count] = (f"[Name:{record[0]}, Category:{record[1]}, Quantity Purchase:{record[2]}, Lasted Purchase Price:{record[3]}, Lasted Date:{record[4]}, Price:{record[5]}$]")
+                        count += 1
+
+                for key, value in record.items():
+                      if find in value:
+                        print(value)
+                        vv += 1
+                      else:
+                        continue
+                if vv == 0:
+                      print(f"Not found  [{find}] in any records")
+                print()
 
 #Remove
 def remove_record(file):
