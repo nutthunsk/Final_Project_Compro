@@ -80,10 +80,9 @@ def edit_record(file):
         print("Error: File Not Found!")
         return
 
-    records = []  # เก็บข้อมูลเรคคอร์ดทั้งหมด
-    record_size = struct.calcsize("i20si20sf")  # ขนาดของเรคคอร์ด
+    records = []  
+    record_size = struct.calcsize("i20si20sf")  
 
-    # อ่านข้อมูลทั้งหมดจากไฟล์
     with open(file, "rb") as file_obj:
         while True:
             record = file_obj.read(record_size)
@@ -91,14 +90,12 @@ def edit_record(file):
                 break
             records.append(struct.unpack("i20si20sf", record))
 
-    # แสดงรายชื่อเรคคอร์ดให้ผู้ใช้เลือก
     print("Current Records:")
     for idx, record in enumerate(records):
         name = record[1].decode().strip()
         category = record[0].decode().strip()
         print(f"{idx + 1}: [Name: {name}, Category: {category}]")
 
-    # ขอให้ผู้ใช้เลือกเรคคอร์ดที่จะทำการแก้ไข
     try:
         index = int(input("Enter the record number you want to edit: ")) - 1
         if index < 0 or index >= len(records):
@@ -114,7 +111,6 @@ def edit_record(file):
 
     print(f"Editing record: [Name: {name}, Category: {category}]")
 
-    # รับข้อมูลใหม่จากผู้ใช้
     new_name = input(f"New Name (leave blank to keep '{name}'): ").ljust(20)[:20]
     new_category = input(f"New Category (leave blank to keep '{category}'): ").ljust(20)[:20]
     new_quantity_purchase = input(f"New Quantity Purchase (current: {record_to_edit[2]}): ")
@@ -122,7 +118,6 @@ def edit_record(file):
     new_lasted_date = input(f"New Lasted Date (current: {record_to_edit[4]}): ")
     new_price = input(f"New Price (current: {record_to_edit[5]}): ")
 
-    # อัปเดตข้อมูล
     new_name = new_name if new_name.strip() else name.ljust(20)[:20]
     new_category = new_category if new_category.strip() else category.ljust(20)[:20]
     new_quantity_purchase = float(new_quantity_purchase) if new_quantity_purchase else record_to_edit[2]
@@ -130,17 +125,14 @@ def edit_record(file):
     new_lasted_date = int(new_lasted_date) if new_lasted_date else record_to_edit[4]
     new_price = float(new_price) if new_price else record_to_edit[5]
 
-    # อัปเดตเรคคอร์ดในลิสต์
     records[index] = (
         new_category.encode(),
         new_name.encode(),
         new_quantity_purchase,
         new_lasted_purchase_price,
         new_lasted_date,
-        new_price
-    )
+        new_price)
 
-    # เขียนข้อมูลที่แก้ไขกลับไปในไฟล์
     with open(file, "wb") as file_obj:
         for record in records:
             file_obj.write(struct.pack("i20si20sf", *record))
