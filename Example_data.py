@@ -5,38 +5,43 @@ import struct, os
 
 #Create
 def create_records(file):
-
-    with open(file, "wb") as file:
-        count = 0
+    with open(file, "wb") as file_obj:
         try:
-              count = int(input("How many record you want to create?: "))
+            count = int(input("How many records do you want to create?: "))  
         except ValueError as e:
-              print(f"Error: {e}")
+            print(f"Error: Please enter a valid number. {e}")
+            return  
         except Exception as e:
-              print(f"Error: {e}")
-        else:
-                for i in range(count):
-                        try:
-                                print(f"Number #{count +1}")
-                                name = input("Name: ")
-                                category = input("Category: ")
-                                quantity_purchase = input("Quantity Purchase: ")
-                                lasted_purchase_price = input("Lasted Purchase Price: ")
-                                lasted_date = input("Lasted Date: ")
-                                price = input("Price: ")
-                        except ValueError as e:
-                                print(f"Error: {e}")
-                                break
-                        except Exception as e:
-                                print(f"Error: {e}")
-                                break
-                        else:
-                              data = struct.pack("i20si20sf", category.encode(), name.encode(), quantity_purchase.encode(), lasted_purchase_price.encode(),  lasted_date, price.encode())
-                              file.write(data)
-                              count += 1
-                              break
+            print(f"Unexpected Error: {e}")
+            return
 
-                print(f"Done! {count}")
+        for i in range(count):
+            try:
+                print(f"\nRecord #{i + 1}:")
+                name = input("Name: ").ljust(20)[:20]  
+                category = input("Category: ").ljust(20)[:20]  
+                quantity_purchase = input("Quantity Purchase: ")
+                lasted_purchase_price = input("Last Purchase Price: ")
+                lasted_date = input("Last Purchase Date (YYYYMMDD): ")
+                price = input("Price: ")
+
+                if len(name.strip()) == 0 or len(category.strip()) == 0:
+                    print("Error: Name and category cannot be empty.")
+                    return
+                if quantity_purchase <= 0 or price <= 0:
+                    print("Error: Quantity and price must be greater than zero.")
+                    return
+
+                data = struct.pack("20s20sfif", name.encode(), category.encode(), quantity_purchase, lasted_purchase_price, lasted_date, price)
+                file_obj.write(data)  
+            except ValueError as e:
+                print(f"Error: Invalid input. {e}") 
+                return
+            except Exception as e:
+                print(f"Unexpected Error: {e}")
+                return
+
+        print(f"\nSuccessfully created {count} record(s)!")
 
 #Add
 def add_records(file):
