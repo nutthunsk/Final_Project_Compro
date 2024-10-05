@@ -9,7 +9,7 @@ def create_records(file):
     with open(file, "wb") as file:
         count = 0
         try:
-              count = int(input("How record to create?: "))
+              count = int(input("How many record you want to create?: "))
         except ValueError as e:
               print(f"Error: {e}")
         except Exception as e:
@@ -21,7 +21,7 @@ def create_records(file):
                                 name = input("Name: ")
                                 category = input("Category: ")
                                 quantity_purchase = float(input("Quantity Purchase: "))
-                                lasted_purchase_price = float(input("Lasted Purchase Price: "))
+                                lasted_purchase_price = input("Lasted Purchase Price: ")
                                 lasted_date = int(input("Lasted Date: "))
                                 price = float(input("Price: "))
                         except ValueError as e:
@@ -31,7 +31,7 @@ def create_records(file):
                                 print(f"Error: {e}")
                                 break
                         else:
-                              data = struct.pack("i20si20sf", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price,  lasted_date, price)
+                              data = struct.pack("i20si20sf", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price.encode(),  lasted_date, price)
                               file.write(data)
                               count += 1
                               break
@@ -40,39 +40,41 @@ def create_records(file):
 
 #Add
 def add_records(file):
-    check = os.path.exists(file)
-    if check != True:
-          print("Error: File Not Found!")
-    else:
-          with open(file, "ab") as file:
-                count = 0
-                try:
-                        count = int(input("How record to create?: "))
-                except ValueError as e:
-                        print(f"Error: {e}")
-                except Exception as e:
-                        print(f"Error: {e}")
-                else:
-                      for i in range(count):
-                            try:
-                                print(f"Number #{count +1}")
-                                name = input("Name: ")
-                                category = input("Category: ")
-                                quantity_purchase = float(input("Quantity Purchase: "))
-                                lasted_purchase_price = float(input("Lasted Purchase Price: "))
-                                lasted_date = int(input("Lasted Date: "))
-                                price = float(input("Price: "))
-                            except ValueError as e:
-                                print(f"Error: {e}")
-                            except Exception as e:
-                                print(f"Error: {e}")
-                            else:
-                                data = struct.pack("i20si20sf", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price,  lasted_date, price)
-                                file.write(data)
-                                count += 1
-                                break 
+    if not os.path.exists(file):
+        print("Error: File Not Found!")
+        return  
 
-                print(f"Done! {count}")
+    with open(file, "ab") as file_obj:
+        try:
+            count = int(input("How many records to add?: ")) 
+        except ValueError as e:
+            print(f"Error: {e}")
+            return  
+        except Exception as e:
+            print(f"Unexpected Error: {e}")
+            return  
+
+        for i in range(count):
+            try:
+                print(f"Record #{i + 1}:")
+                name = input("Name: ").ljust(20)[:20]  
+                category = input("Category: ").ljust(20)[:20]  
+                quantity_purchase = float(input("Quantity Purchase: "))
+                lasted_purchase_price = float(input("Lasted Purchase Price: "))
+                lasted_date = int(input("Lasted Date (YYYYMMDD): "))
+                price = float(input("Price: "))
+                
+                data = struct.pack("20s20sfif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, price)
+                file_obj.write(data)  
+            except ValueError as e:
+                print(f"Error: {e}")
+                return  
+            except Exception as e:
+                print(f"Unexpected Error: {e}")
+                return  
+
+        print(f"Successfully added {count} record(s)!")
+
 #Edit
 def edit_record(file):
     check = os.path.exists(file)
@@ -121,7 +123,7 @@ def edit_record(file):
     new_name = new_name if new_name.strip() else name.ljust(20)[:20]
     new_category = new_category if new_category.strip() else category.ljust(20)[:20]
     new_quantity_purchase = float(new_quantity_purchase) if new_quantity_purchase else record_to_edit[2]
-    new_lasted_purchase_price = float(new_lasted_purchase_price) if new_lasted_purchase_price else record_to_edit[3]
+    new_lasted_purchase_price = (new_lasted_purchase_price) if new_lasted_purchase_price else record_to_edit[3]
     new_lasted_date = int(new_lasted_date) if new_lasted_date else record_to_edit[4]
     new_price = float(new_price) if new_price else record_to_edit[5]
 
@@ -129,7 +131,7 @@ def edit_record(file):
         new_category.encode(),
         new_name.encode(),
         new_quantity_purchase,
-        new_lasted_purchase_price,
+        new_lasted_purchase_price.encode(),
         new_lasted_date,
         new_price)
 
@@ -154,7 +156,7 @@ def read_records(file) ->str:
                             break
                       else:
                             record = struct.unpack("i20si20sf", record)
-                            record = record[0].decode(), record[1].decode(), record[3], record[4], record[5]
+                            record = record[0].decode(), record[1].decode(), record[3], record[4].encode(), record[5]
                             print(f"[Name:{record[0]}, Category:{record[1]}, Quantity Purchase:{record[2]}, Lasted Purchase Price:{record[3]}, Lasted Date:{record[4]}, Price:{record[5]}$]")
                 print()
 
@@ -177,7 +179,7 @@ def find_records(file) ->str:
                             break
                       else:
                         record = struct.unpack("i20si20sf", record)
-                        record = record[0].decode(), record[1].decode(), record[3], record[4], record[5]
+                        record = record[0].decode(), record[1].decode(), record[3], record[4].encode(), record[5]
                         record[count] = (f"[Name:{record[0]}, Category:{record[1]}, Quantity Purchase:{record[2]}, Lasted Purchase Price:{record[3]}, Lasted Date:{record[4]}, Price:{record[5]}$]")
                         count += 1
 
