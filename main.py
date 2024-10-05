@@ -6,12 +6,12 @@ def Run():
     print("Welcome!\n")
     file = input("File Path: ")
     print("_____________")
-    print("1.Create records\n2.Add records\n3.Edit record(unfinished)\n4.Show records\n5.Find record\n6.Remove record(unfinished)\n7.Delete file record")
+    print("1.Create records\n2.Add records\n3.Edit record(unfinished)\n4.Show records\n5.Find record\n6.Remove record(unfinished)\n7.Delete file record\n8.Exit")
     print("_____________")
     while runing:
-        choice = input("Action (1-7): ")
+        choice = input("Action (1-8): ")
 
-        if choice not in ["1", "2", "3", "4", "5", "6", "7"]:
+        if choice not in ["1", "2", "3", "4", "5", "6", "7","8"]:
             print("Error: ValueError")
             runing = False
         else:
@@ -30,6 +30,9 @@ def Run():
                     md.remove_record(file)
                 case "7":
                     md.delete_record(file)
+                case "8":
+                    print("Exiting program...")
+                    break
 
 if __name__ == "__main__":
     Run()
