@@ -18,25 +18,18 @@ def Run():
             match choice:
                 case "1":
                     md.create_records(file)
-                    runing = False
                 case "2":
                     md.add_records(file)
-                    runing = False
                 case "3":
                     md.edit_record(file)
-                    runing = False
                 case "4":
                     md.read_records(file)
-                    runing = False
                 case"5":
                     md.find_records(file)
-                    runing = False
                 case "6":
                     md.remove_record(file)
-                    runing = False
                 case "7":
                     md.delete_record(file)
-                    runing = False
 
 if __name__ == "__main__":
     Run()
