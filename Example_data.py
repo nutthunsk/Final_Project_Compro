@@ -20,10 +20,10 @@ def create_records(file):
                                 print(f"Number #{count +1}")
                                 name = input("Name: ")
                                 category = input("Category: ")
-                                quantity_purchase = float(input("Quantity Purchase: "))
+                                quantity_purchase = input("Quantity Purchase: ")
                                 lasted_purchase_price = input("Lasted Purchase Price: ")
-                                lasted_date = int(input("Lasted Date: "))
-                                price = float(input("Price: "))
+                                lasted_date = input("Lasted Date: ")
+                                price = input("Price: ")
                         except ValueError as e:
                                 print(f"Error: {e}")
                                 break
@@ -31,7 +31,7 @@ def create_records(file):
                                 print(f"Error: {e}")
                                 break
                         else:
-                              data = struct.pack("i20si20sf", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price.encode(),  lasted_date, price)
+                              data = struct.pack("i20si20sf", category.encode(), name.encode(), quantity_purchase.encode(), lasted_purchase_price.encode(),  lasted_date, price.encode())
                               file.write(data)
                               count += 1
                               break
@@ -59,12 +59,12 @@ def add_records(file):
                 print(f"Record #{i + 1}:")
                 name = input("Name: ").ljust(20)[:20]  
                 category = input("Category: ").ljust(20)[:20]  
-                quantity_purchase = float(input("Quantity Purchase: "))
-                lasted_purchase_price = float(input("Lasted Purchase Price: "))
-                lasted_date = int(input("Lasted Date (YYYYMMDD): "))
-                price = float(input("Price: "))
+                quantity_purchase = input("Quantity Purchase: ")
+                lasted_purchase_price = input("Lasted Purchase Price: ")
+                lasted_date = input("Lasted Date (YYYYMMDD): ")
+                price = input("Price: ")
                 
-                data = struct.pack("20s20sfif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, price)
+                data = struct.pack("20s20sfif", category.encode(), name.encode(), quantity_purchase.encode(), lasted_purchase_price.encode(), lasted_date.encode(), price.encode())
                 file_obj.write(data)  
             except ValueError as e:
                 print(f"Error: {e}")
@@ -122,18 +122,18 @@ def edit_record(file):
 
     new_name = new_name if new_name.strip() else name.ljust(20)[:20]
     new_category = new_category if new_category.strip() else category.ljust(20)[:20]
-    new_quantity_purchase = float(new_quantity_purchase) if new_quantity_purchase else record_to_edit[2]
+    new_quantity_purchase = (new_quantity_purchase) if new_quantity_purchase else record_to_edit[2]
     new_lasted_purchase_price = (new_lasted_purchase_price) if new_lasted_purchase_price else record_to_edit[3]
-    new_lasted_date = int(new_lasted_date) if new_lasted_date else record_to_edit[4]
-    new_price = float(new_price) if new_price else record_to_edit[5]
+    new_lasted_date = new_lasted_date if new_lasted_date else record_to_edit[4]
+    new_price = new_price if new_price else record_to_edit[5]
 
     records[index] = (
         new_category.encode(),
         new_name.encode(),
-        new_quantity_purchase,
+        new_quantity_purchase.encode(),
         new_lasted_purchase_price.encode(),
-        new_lasted_date,
-        new_price)
+        new_lasted_date.encode(),
+        new_price.encode())
 
     with open(file, "wb") as file_obj:
         for record in records:
@@ -217,7 +217,7 @@ def remove_record(file):
         print(f"{idx + 1}: [Name: {name}, Category: {category}]")
 
     try:
-        index = int(input("Enter the record number you want to remove: ")) - 1
+        index = input("Enter the record number you want to remove: ") - 1
         if index < 0 or index >= len(records):
             print("Error: Invalid record number.")
             return
