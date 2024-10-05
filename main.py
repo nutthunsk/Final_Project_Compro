@@ -4,7 +4,7 @@ def Run():
     runing = True
 
     print("Welcome!\n")
-    file = input("File: ")
+    file = input("File Path: ")
     print("_____________")
     print("1.Create records\n2.Add records\n3.Edit record(unfinished)\n4.Show records\n5.Find record\n6.Remove record(unfinished)\n7.Delete file record")
     print("_____________")
