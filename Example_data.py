@@ -5,6 +5,7 @@ import struct, os
 
 #Create
 def create_records(file):
+
     with open(file, "wb") as file_obj:
         try:
             count = int(input("How many records do you want to create?: "))  
@@ -17,25 +18,23 @@ def create_records(file):
 
         for i in range(count):
             try:
+
                 print(f"\nRecord #{i + 1}:")
-                name = input("Name: ").ljust(20)[:20]  
+                name = input("Name: ").ljust(20)[:20]
                 category = input("Category: ").ljust(20)[:20]  
                 quantity_purchase = input("Quantity Purchase: ")
                 lasted_purchase_price = input("Last Purchase Price: ")
                 lasted_date = input("Last Purchase Date (YYYYMMDD): ")
                 price = input("Price: ")
 
-                if len(name.strip()) == 0 or len(category.strip()) == 0:
-                    print("Error: Name and category cannot be empty.")
-                    return
-                if quantity_purchase <= 0 or price <= 0:
-                    print("Error: Quantity and price must be greater than zero.")
+                if len(name.strip()) == 0:
+                    print("Error: Name cannot be empty.")
                     return
 
-                data = struct.pack("20s20sfif", name.encode(), category.encode(), quantity_purchase, lasted_purchase_price, lasted_date, price)
+                data = struct.pack("i20sfifi", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, price)
                 file_obj.write(data)  
             except ValueError as e:
-                print(f"Error: Invalid input. {e}") 
+                print(f"Error: Invalid input. {e}")  
                 return
             except Exception as e:
                 print(f"Unexpected Error: {e}")
@@ -69,7 +68,7 @@ def add_records(file):
                 lasted_date = input("Lasted Date (YYYYMMDD): ")
                 price = input("Price: ")
                 
-                data = struct.pack("20s20sfif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, price)
+                data = struct.pack("20s20sfffif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, price)
                 file_obj.write(data)  
             except ValueError as e:
                 print(f"Error: {e}")
@@ -88,14 +87,14 @@ def edit_record(file):
         return
 
     records = []  
-    record_size = struct.calcsize("i20si20sf")  
+    record_size = struct.calcsize("i20sfif f")  
 
     with open(file, "rb") as file_obj:
         while True:
             record = file_obj.read(record_size)
             if not record:
                 break
-            records.append(struct.unpack("i20si20sf", record))
+            records.append(struct.unpack("i20sfif f", record))
 
     print("Current Records:")
     for idx, record in enumerate(records):
@@ -142,7 +141,7 @@ def edit_record(file):
 
     with open(file, "wb") as file_obj:
         for record in records:
-            file_obj.write(struct.pack("i20si20sf", *record))
+            file_obj.write(struct.pack("i20sfif f", *record))
 
     print("Record updated successfully.")
 
@@ -156,11 +155,11 @@ def read_records(file) ->str:
         with open(file, "rb") as file:
                 print("Result: ")
                 while True:
-                      record = file.read(struct.calcsize("i20si20sf"))
+                      record = file.read(struct.calcsize("i20sfif f"))
                       if not record:
                             break
                       else:
-                            record = struct.unpack("i20si20sf", record)
+                            record = struct.unpack("i20sfif f", record)
                             record = record[0].decode(), record[1].decode(), record[3], record[4].encode(), record[5]
                             print(f"[Name:{record[0]}, Category:{record[1]}, Quantity Purchase:{record[2]}, Lasted Purchase Price:{record[3]}, Lasted Date:{record[4]}, Price:{record[5]}$]")
                 print()
@@ -179,11 +178,11 @@ def find_records(file) ->str:
 
         with open(file, "rb") as file:
                 while True:
-                      record = file.read(struct.calcsize("i20si20sf"))
+                      record = file.read(struct.calcsize("i20sfif f"))
                       if not record:
                             break
                       else:
-                        record = struct.unpack("i20si20sf", record)
+                        record = struct.unpack("i20sfif f", record)
                         record = record[0].decode(), record[1].decode(), record[3], record[4].encode(), record[5]
                         record[count] = (f"[Name:{record[0]}, Category:{record[1]}, Quantity Purchase:{record[2]}, Lasted Purchase Price:{record[3]}, Lasted Date:{record[4]}, Price:{record[5]}$]")
                         count += 1
@@ -206,14 +205,14 @@ def remove_record(file):
         return
 
     records = []  
-    record_size = struct.calcsize("i20si20sf")  
+    record_size = struct.calcsize("i20sfif f")  
 
     with open(file, "rb") as file_obj:
         while True:
             record = file_obj.read(record_size)
             if not record:
                 break
-            records.append(struct.unpack("i20si20sf", record))
+            records.append(struct.unpack("i20sfif f", record))
 
     print("Current Records:")
     for idx, record in enumerate(records):
@@ -243,7 +242,7 @@ def remove_record(file):
 
     with open(file, "wb") as file_obj:
         for record in records:
-            file_obj.write(struct.pack("i20si20sf", *record))
+            file_obj.write(struct.pack("i20sfif f", *record))
 
     print("Record removed successfully.")
 
