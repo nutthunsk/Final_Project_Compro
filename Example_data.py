@@ -69,7 +69,7 @@ def add_records(file):
                 lasted_date = input("Lasted Date (YYYYMMDD): ")
                 price = input("Price: ")
                 
-                data = struct.pack("20s20sfif", category.encode(), name.encode(), quantity_purchase.encode(), lasted_purchase_price.encode(), lasted_date.encode(), price.encode())
+                data = struct.pack("20s20sfif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, price)
                 file_obj.write(data)  
             except ValueError as e:
                 print(f"Error: {e}")
@@ -135,10 +135,10 @@ def edit_record(file):
     records[index] = (
         new_category.encode(),
         new_name.encode(),
-        new_quantity_purchase.encode(),
-        new_lasted_purchase_price.encode(),
-        new_lasted_date.encode(),
-        new_price.encode())
+        new_quantity_purchase,
+        new_lasted_purchase_price,
+        new_lasted_date,
+        new_price)
 
     with open(file, "wb") as file_obj:
         for record in records:
