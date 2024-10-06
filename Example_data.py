@@ -19,18 +19,30 @@ def create_records(file):
         for i in range(count):
             try:
 
+                """"
+                ตรงนี้ไม่ได้แปลงประเภทข้อมูล
+                """
                 print(f"\nRecord #{i + 1}:")
                 name = input("Name: ").ljust(20)[:20]
                 category = input("Category: ").ljust(20)[:20]  
-                quantity_purchase = input("Quantity Purchase: ")
-                lasted_purchase_price = input("Last Purchase Price: ")
-                lasted_date = input("Last Purchase Date (YYYYMMDD): ")
-                price = input("Price: ")
+                quantity_purchase = input("Quantity Purchase: ") #ควรเป็น int 
+                lasted_purchase_price = input("Last Purchase Price: ") # ควรเป็น float
+                lasted_date = input("Last Purchase Date (YYYYMMDD): ") # อันนี้วันที่แล้วแต่ว่าจะเปลี่ยนไหม
+                price = input("Price: ") # ควรเป็น float
 
                 if len(name.strip()) == 0:
                     print("Error: Name cannot be empty.")
                     return
 
+                """
+                โครงสร้างผิด ไม่ตรงกับข้อมูล ควรหน้าตาประมาณนี้
+                struct.pack("20s20sif20sf", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date.encode(), price)
+
+                ตัวอย่าง
+                20s = str (เป็น str ต้อง encode,decode)
+                i = int
+                f = float
+                """
                 data = struct.pack("i20sfifi", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, price)
                 file_obj.write(data)  
             except ValueError as e:
@@ -43,6 +55,9 @@ def create_records(file):
         print(f"\nSuccessfully created {count} record(s)!")
 
 #Add
+"""
+อันนี้ก็ผิดคล้ายๆ fuction ข้างบนแก้เเบบเดียวกัน
+"""
 def add_records(file):
     if not os.path.exists(file):
         print("Error: File Not Found!")
@@ -87,14 +102,14 @@ def edit_record(file):
         return
 
     records = []  
-    record_size = struct.calcsize("i20sfif f")  
+    record_size = struct.calcsize("i20sfif f")  #แก้โครงสร้าง
 
     with open(file, "rb") as file_obj:
         while True:
             record = file_obj.read(record_size)
             if not record:
-                break
-            records.append(struct.unpack("i20sfif f", record))
+                break                    #แก้โครงสร้าง
+            records.append(struct.unpack("i20sfif f", record)) 
 
     print("Current Records:")
     for idx, record in enumerate(records):
@@ -117,6 +132,9 @@ def edit_record(file):
 
     print(f"Editing record: [Name: {name}, Category: {category}]")
 
+    """
+    **แปลงประเภทข้อมูล
+    """
     new_name = input(f"New Name (leave blank to keep '{name}'): ").ljust(20)[:20]
     new_category = input(f"New Category (leave blank to keep '{category}'): ").ljust(20)[:20]
     new_quantity_purchase = input(f"New Quantity Purchase (current: {record_to_edit[2]}): ")
@@ -136,11 +154,11 @@ def edit_record(file):
         new_name.encode(),
         new_quantity_purchase,
         new_lasted_purchase_price,
-        new_lasted_date,
+        new_lasted_date, # ถ้าทำวันที่เป็น str อย่าลืม encode
         new_price)
 
     with open(file, "wb") as file_obj:
-        for record in records:
+        for record in records:          #**โครงสร้าง
             file_obj.write(struct.pack("i20sfif f", *record))
 
     print("Record updated successfully.")
@@ -154,12 +172,12 @@ def read_records(file) ->str:
     else:
         with open(file, "rb") as file:
                 print("Result: ")
-                while True:
+                while True:                                #**โครงสร้าง
                       record = file.read(struct.calcsize("i20sfif f"))
                       if not record:
                             break
-                      else:
-                            record = struct.unpack("i20sfif f", record)
+                      else:                           #**โครงสร้าง
+                            record = struct.unpack("i20sfif f", record)                    #encode ทำไม?
                             record = record[0].decode(), record[1].decode(), record[3], record[4].encode(), record[5]
                             print(f"[Name:{record[0]}, Category:{record[1]}, Quantity Purchase:{record[2]}, Lasted Purchase Price:{record[3]}, Lasted Date:{record[4]}, Price:{record[5]}$]")
                 print()
@@ -177,12 +195,14 @@ def find_records(file) ->str:
         vv = 0        
 
         with open(file, "rb") as file:
-                while True:
+                while True:                                #**โครงสร้าง
                       record = file.read(struct.calcsize("i20sfif f"))
                       if not record:
                             break
-                      else:
+                      else:                     #**โครงสร้าง
                         record = struct.unpack("i20sfif f", record)
+                                                
+                                                """record[2] หายไปไหน?"""
                         record = record[0].decode(), record[1].decode(), record[3], record[4].encode(), record[5]
                         record[count] = (f"[Name:{record[0]}, Category:{record[1]}, Quantity Purchase:{record[2]}, Lasted Purchase Price:{record[3]}, Lasted Date:{record[4]}, Price:{record[5]}$]")
                         count += 1
@@ -204,14 +224,14 @@ def remove_record(file):
         print("Error: File Not Found!")
         return
 
-    records = []  
+    records = []                    #**โครงสร้าง
     record_size = struct.calcsize("i20sfif f")  
 
     with open(file, "rb") as file_obj:
         while True:
             record = file_obj.read(record_size)
             if not record:
-                break
+                break                      #**โครงสร้าง
             records.append(struct.unpack("i20sfif f", record))
 
     print("Current Records:")
@@ -221,7 +241,7 @@ def remove_record(file):
         print(f"{idx + 1}: [Name: {name}, Category: {category}]")
 
     try:
-        index = input("Enter the record number you want to remove: ") - 1
+        index = input("Enter the record number you want to remove: ") - 1 #แปลงเป็น int ด้วยไม่งั้นลบไม่ได้
         if index < 0 or index >= len(records):
             print("Error: Invalid record number.")
             return
@@ -241,7 +261,7 @@ def remove_record(file):
     del records[index]
 
     with open(file, "wb") as file_obj:
-        for record in records:
+        for record in records:          #**โครงสร้าง
             file_obj.write(struct.pack("i20sfif f", *record))
 
     print("Record removed successfully.")
