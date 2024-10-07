@@ -5,9 +5,7 @@ def Run():
 
     print("======= Welcome! =======\n")
     file = input("File Path: ")
-    print("__________________")
-    print("1.Create records\n2.Add records\n3.Edit record(unfinished)\n4.Show records\n5.Find record\n6.Remove record(unfinished)\n7.Delete file record\n8.Exit")
-    print("__________________")
+    print("_____________________________\n1.Create records\n2.Add records\n3.Edit record(unfinished)\n4.Show records\n5.Find record\n6.Remove record(unfinished)\n7.Delete file record\n8.Exit\n_____________________________")
     while runing:
         choice = input("Action (1-8): ")
 

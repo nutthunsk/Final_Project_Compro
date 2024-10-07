@@ -1,6 +1,6 @@
 import struct, os
 """
-[name, category, quantity_purchase, lasted_purchase_price, lasted_date, price]
+[name, category, quantity_purchased, lasted_purchase_price, lasted_date, price]
 """
 
 #Create
@@ -22,7 +22,7 @@ def create_records(file):
                 print(f"\nRecord #{i + 1}:")
                 name = input("Name: ").ljust(20)[:20]
                 category = input("Category: ").ljust(20)[:20]  
-                quantity_purchase = float(input("Quantity Purchase: "))
+                quantity_purchase = float(input("Quantity Purchased: "))
                 lasted_purchase_price = float(input("Last Purchase Price: "))
                 lasted_date = int(input("Last Purchase Date (YYYYMMDD): "))
                 price = float(input("Price: "))
@@ -63,7 +63,7 @@ def add_records(file):
                 print(f"Record #{i + 1}:")
                 name = input("Name: ").ljust(20)[:20]
                 category = input("Category: ").ljust(20)[:20]  
-                quantity_purchase = float(input("Quantity Purchase: "))
+                quantity_purchase = float(input("Quantity Purchased: "))
                 lasted_purchase_price = float(input("Last Purchase Price: "))
                 lasted_date = int(input("Last Purchase Date (YYYYMMDD): "))
                 price = float(input("Price: "))
@@ -119,7 +119,7 @@ def edit_record(file):
 
     new_name = input(f"New Name (leave blank to keep '{name}'): ").ljust(20)[:20]
     new_category = input(f"New Category (leave blank to keep '{category}'): ").ljust(20)[:20]
-    new_quantity_purchase = float(input(f"New Quantity Purchase (current: {record_to_edit[2]}): "))
+    new_quantity_purchase = float(input(f"New Quantity Purchased (current: {record_to_edit[2]}): "))
     new_lasted_purchase_price = float(input(f"New Lasted Purchase Price (current: {record_to_edit[3]}): "))
     new_lasted_date = int(input(f"New Lasted Date (current: {record_to_edit[4]}): "))
     new_price = float(input(f"New Price (current: {record_to_edit[5]}): "))
@@ -161,7 +161,7 @@ def read_records(file) ->str:
                       else:
                             record = struct.unpack("20s20sffif", record)
                             record = record[0].decode(), record[1].decode(), record[2], record[3], record[4], record[5]
-                            print(f"=========================\n Name:{record[0]}\n Category:{record[1]}\n Quantity Purchase:{record[2]:.1f}\n Lasted Purchase Price:{record[3]}\n Lasted Date:{record[4]}\n Price:{record[5]}$\n=========================")
+                            print(f"=========================\n Name:{record[1]}\n Category:{record[0]}\n Quantity Purchased:{record[2]:.1f}kg.\n Lasted Purchase Price:{record[3]}\n Lasted Date:{record[4]}\n Price:{record[5]}฿\n=========================")
                 print()
 
 #Find
@@ -170,7 +170,7 @@ def find_records(file) ->str:
     if check != True:
         print("Error: File Not File!")
     else:
-        find = input("Which record are you looking for? (name, category, quantity_purchase, lasted_purchase_price, lasted_date, price): ")
+        find = input("Which record are you looking for? (name, category, quantity_purchased, lasted_purchase_price, lasted_date, price): ")
         print("Result: ")
         v_record = {}
         count = 1
@@ -184,7 +184,7 @@ def find_records(file) ->str:
                       else:
                         record = struct.unpack("20s20sffif", record)
                         record = record[0].decode(), record[1].decode(), record[2], record[3], record[4], record[5]
-                        v_record[count] = (f"=========================\n Name:{record[0]}\n Category:{record[1]}\n Quantity Purchase:{record[2]:.1f}\n Lasted Purchase Price:{record[3]}\n Lasted Date:{record[4]}\n Price:{record[5]}$\n=========================")
+                        v_record[count] = (f"=========================\n Name:{record[0]}\n Category:{record[1]}\n Quantity Purchased:{record[2]:.1f}kg.\n Lasted Purchase Price:{record[3]}\n Lasted Date:{record[4]}\n Price:{record[5]}$\n=========================")
                         count += 1
 
                 for key, value in v_record.items():
