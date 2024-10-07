@@ -161,7 +161,7 @@ def read_records(file) ->str:
                       else:
                             record = struct.unpack("20s20sifif", record)
                             record = record[0].decode(), record[1].decode(), record[2], record[3], record[4], record[5]
-                            print(f"[Name:{record[0]}, Category:{record[1]}, Quantity Purchase:{record[2]}, Lasted Purchase Price:{record[3]}, Lasted Date:{record[4]}, Price:{record[5]}$]")
+                            print(f"____________________\n Name:{record[0]}\n Category:{record[1]}\n Quantity Purchase:{record[2]}\n Lasted Purchase Price:{record[3]}\n Lasted Date:{record[4]}\n Price:{record[5]}$\n____________________")
                 print()
 
 #Find
