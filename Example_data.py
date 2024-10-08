@@ -184,7 +184,7 @@ def find_records(file) ->str:
                       else:
                         record = struct.unpack("20s20sffif", record)
                         record = record[0].decode(), record[1].decode(), record[2], record[3], record[4], record[5]
-                        v_record[count] = (f"=========================\n Name:{record[0]}\n Category:{record[1]}\n Quantity Purchased:{record[2]:.1f}kg.\n Lasted Purchase Price:{record[3]}\n Lasted Date:{record[4]}\n Price:{record[5]}$\n=========================")
+                        v_record[count] = (f"===============================\n Name:{record[0]}\n Category:{record[1]}\n Quantity Purchased:{record[2]:.1f}kg.\n Lasted Purchase Price:{record[3]}\n Lasted Date:{record[4]}\n Price:{record[5]}$\n===============================")
                         count += 1
 
                 for key, value in v_record.items():
