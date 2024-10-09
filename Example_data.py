@@ -81,8 +81,7 @@ def add_records(file):
 
 #Edit
 def edit_record(file):
-    check = os.path.exists(file)
-    if not check:
+    if not os.path.exists(file):
         print("Error: File Not Found!")
         return
 
@@ -111,34 +110,54 @@ def edit_record(file):
         print("Error: Invalid input. Please enter a number.")
         return
 
-    record_to_edit = records[index]
-    name = record_to_edit[1].decode().strip()
-    category = record_to_edit[0].decode().strip()
+    record_to_edit = list(records[index])
 
-    print(f"Editing record: [Name: {name}, Category: {category}]")
-
-    new_name = input(f"New Name (leave blank to keep '{name}'): ").ljust(20)[:20]
-    new_category = input(f"New Category (leave blank to keep '{category}'): ").ljust(20)[:20]
-    new_quantity_purchase = float(input(f"New Quantity Purchased (current: {record_to_edit[2]}): "))
-    new_lasted_purchase_price = float(input(f"New Lasted Purchase Price (current: {record_to_edit[3]}): "))
-    new_lasted_date = int(input(f"New Lasted Date (current: {record_to_edit[4]}): "))
-    new_amount_used = float(input(f"New Amount Used (current: {record_to_edit[5]}): "))
-
-    new_name = new_name if new_name.strip() else name.ljust(20)[:20]
-    new_category = new_category if new_category.strip() else category.ljust(20)[:20]
-    new_quantity_purchase = (new_quantity_purchase) if new_quantity_purchase else record_to_edit[2]
-    new_lasted_purchase_price = (new_lasted_purchase_price) if new_lasted_purchase_price else record_to_edit[3]
-    new_lasted_date = new_lasted_date if new_lasted_date else record_to_edit[4]
-    new_amount_used = new_amount_used if new_amount_used else record_to_edit[5]
-
-    records[index] = (
-        new_category.encode(),
-        new_name.encode(),
-        new_quantity_purchase,
-        new_lasted_purchase_price,
-        new_lasted_date,
-        new_amount_used)
-
+    while True:
+        print("\nWhich field would you like to edit?")
+        print("1. Name")
+        print("2. Category")
+        print("3. Quantity Purchased")
+        print("4. Last Purchase Price")
+        print("5. Last Purchase Date")
+        print("6. Amount Used")
+        print("7. Done (Finish Editing)")
+        
+        choice = input("Select an option (1-7): ")
+        
+        if choice == '1':
+            new_name = input(f"Name [{record_to_edit[1].decode().strip()}]: ").ljust(20)[:20] or record_to_edit[1].decode().strip()
+            record_to_edit[1] = new_name.encode()
+        elif choice == '2':
+            new_category = input(f"Category [{record_to_edit[0].decode().strip()}]: ").ljust(20)[:20] or record_to_edit[0].decode().strip()
+            record_to_edit[0] = new_category.encode()
+        elif choice == '3':
+            try:
+                new_quantity_purchase = float(input(f"Quantity Purchased [{record_to_edit[2]}]: ") or record_to_edit[2])
+                record_to_edit[2] = new_quantity_purchase
+            except ValueError:
+                print("Error: Invalid input.")
+        elif choice == '4':
+            try:
+                new_lasted_purchase_price = float(input(f"Last Purchase Price [{record_to_edit[3]}]: ") or record_to_edit[3])
+                record_to_edit[3] = new_lasted_purchase_price
+            except ValueError:
+                print("Error: Invalid input.")
+        elif choice == '5':
+            try:
+                new_lasted_date = int(input(f"Last Purchase Date (DD/MM/YYYY) [{record_to_edit[4]}]: ") or record_to_edit[4])
+                record_to_edit[4] = new_lasted_date
+            except ValueError:
+                print("Error: Invalid input.")
+        elif choice == '6':
+            try:
+                new_amount_used = float(input(f"Amount Used [{record_to_edit[5]}]: ") or record_to_edit[5])
+                record_to_edit[5] = new_amount_used
+            except ValueError:
+                print("Error: Invalid input.")
+        elif choice == '7':
+            break
+        else:
+            print("Error: Invalid choice. Please select a valid option.")
     with open(file, "wb") as file_obj:
         for record in records:
             file_obj.write(struct.pack("20s20sffif", *record))
@@ -167,7 +186,7 @@ def read_records(file) -> str:
 
             record = struct.unpack("20s20sffif", record)
             record = record[0].decode(), record[1].decode(), record[2], record[3], record[4], record[5]
-            print(f"{record[0]}{record[1]:<24}{record[2]:<24.2f}{record[3]:<26.2f}{record[4]:<21}{record[5]:.2f}")
+            print(f"{record[0]}{record[1]:<24}{record[2]:<24.2f}{record[3]:<23.2f}{record[4]:<24}{record[5]:.2f}")
 
 
 #Report
