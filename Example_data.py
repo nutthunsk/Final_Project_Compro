@@ -198,13 +198,7 @@ def report(file):
     record_format = "20s20sffif"
     record_size = struct.calcsize(record_format)
 
-    categories = {
-        'Meats': [],
-        'Seafood': [],
-        'Vegetables': [],
-        'Starch': [],
-        'Seasoning': []
-    }
+    total_values = {}
 
     with open(file, "rb") as f:
         while True:
@@ -215,25 +209,30 @@ def report(file):
 
             category = category.decode().strip()
             name = name.decode().strip()
+            remaining_quantity = quantity_purchased - amount_used
+            value_of_remaining = remaining_quantity * lasted_purchase_price
+            
+            if category not in total_values:
+                total_values[category] = {'items': [], 'total_value': 0.0}
+            total_values[category]['items'].append({
+                'name': name,
+                'remaining_quantity': remaining_quantity,
+                'value_of_remaining': value_of_remaining
+            })
+            total_values[category]['total_value'] += value_of_remaining
 
-            if category in categories:
-                categories[category].append({
-                    'name': name,
-                    'quantity_purchased': quantity_purchased,
-                    'lasted_purchase_price': lasted_purchase_price,
-                    'amount_used': amount_used
-                })
+    print("\nInventory Report")
+    print('___________________________________________________________________________________________________')
+    print(f"{'Category':<20}{'Name':<20}{'Remaining Quantity (kg)':<35}{'Value of Remaining (฿)'}")
+    print('___________________________________________________________________________________________________')
 
-    for category, items in categories.items():
-        print(f"\n{category} Remaining")
-        print(f"{'Name':<15}{'Balance':<10}{'Value of Balance':<10}")
-        total_value = 0
-        for item in items:
-            balance = item['quantity_purchased'] - item['amount_used']
-            value_of_balance = balance * item['lasted_purchase_price']
-            total_value += value_of_balance
-            print(f"{item['name']:<15}{balance:<10.2f}{value_of_balance:<10.2f}")
-        print(f"Value of remaining is {total_value:.2f}")
+    for category, data in total_values.items():
+        for item in data['items']:
+            print(f"{category:<20}{item['name']:<29}{item['remaining_quantity']:<35.2f}{item['value_of_remaining']:.2f}")
+
+        print(f"\nTotal value of remaining items in {category}: {data['total_value']:.2f} ฿")
+        print('_______________________________________________________________________________________________')
+
 
 
 #Find
