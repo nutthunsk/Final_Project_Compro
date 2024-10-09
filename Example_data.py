@@ -110,59 +110,30 @@ def edit_record(file):
         print("Error: Invalid input. Please enter a number.")
         return
 
-    record_to_edit = list(records[index])
+    record_to_edit = records[index]
 
-    while True:
-        print("\nWhich field would you like to edit?")
-        print("1. Name")
-        print("2. Category")
-        print("3. Quantity Purchased")
-        print("4. Last Purchase Price")
-        print("5. Last Purchase Date")
-        print("6. Amount Used")
-        print("7. Done (Finish Editing)")
-        
-        choice = input("Select an option (1-7): ")
-        
-        if choice == '1':
-            new_name = input(f"Name [{record_to_edit[1].decode().strip()}]: ").ljust(20)[:20] or record_to_edit[1].decode().strip()
-            record_to_edit[1] = new_name.encode()
-        elif choice == '2':
-            new_category = input(f"Category [{record_to_edit[0].decode().strip()}]: ").ljust(20)[:20] or record_to_edit[0].decode().strip()
-            record_to_edit[0] = new_category.encode()
-        elif choice == '3':
-            try:
-                new_quantity_purchase = float(input(f"Quantity Purchased [{record_to_edit[2]}]: ") or record_to_edit[2])
-                record_to_edit[2] = new_quantity_purchase
-            except ValueError:
-                print("Error: Invalid input.")
-        elif choice == '4':
-            try:
-                new_lasted_purchase_price = float(input(f"Last Purchase Price [{record_to_edit[3]}]: ") or record_to_edit[3])
-                record_to_edit[3] = new_lasted_purchase_price
-            except ValueError:
-                print("Error: Invalid input.")
-        elif choice == '5':
-            try:
-                new_lasted_date = int(input(f"Last Purchase Date (DD/MM/YYYY) [{record_to_edit[4]}]: ") or record_to_edit[4])
-                record_to_edit[4] = new_lasted_date
-            except ValueError:
-                print("Error: Invalid input.")
-        elif choice == '6':
-            try:
-                new_amount_used = float(input(f"Amount Used [{record_to_edit[5]}]: ") or record_to_edit[5])
-                record_to_edit[5] = new_amount_used
-            except ValueError:
-                print("Error: Invalid input.")
-        elif choice == '7':
-            break
-        else:
-            print("Error: Invalid choice. Please select a valid option.")
+    print("Editing record:")
+    name = input(f"New Name (current: {record_to_edit[1].decode().strip()}): ").ljust(20)[:20] or record_to_edit[1].decode().strip()
+    category = input(f"New Category (current: {record_to_edit[0].decode().strip()}): ").ljust(20)[:20] or record_to_edit[0].decode().strip()
+    
+    try:
+        quantity_purchase = float(input(f"New Quantity Purchased (current: {record_to_edit[2]:.2f}): ") or record_to_edit[2])
+        lasted_purchase_price = float(input(f"New Last Purchase Price (current: {record_to_edit[3]:.2f}): ") or record_to_edit[3])
+        lasted_date = int(input(f"New Last Purchase Date (current: {record_to_edit[4]}): ") or record_to_edit[4])
+        amount_used = float(input(f"New Amount Used (current: {record_to_edit[5]:.2f}): ") or record_to_edit[5])
+    except ValueError as e:
+        print(f"Error: Invalid input. {e}")
+        return
+
+    updated_record = struct.pack("20s20sffif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, amount_used)
+    records[index] = struct.unpack("20s20sffif", updated_record)
+
     with open(file, "wb") as file_obj:
         for record in records:
             file_obj.write(struct.pack("20s20sffif", *record))
 
     print("Record updated successfully.")
+
 
 #Read
 def read_records(file) -> str:
@@ -231,7 +202,7 @@ def report(file):
             print(f"{category:<20}{item['name']:<29}{item['remaining_quantity']:<35.2f}{item['value_of_remaining']:.2f}")
 
         print(f"\nTotal value of remaining items in {category}: {data['total_value']:.2f} ฿")
-        print('_______________________________________________________________________________________________')
+        print('___________________________________________________________________________________________________')
 
 
 
