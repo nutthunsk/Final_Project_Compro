@@ -24,7 +24,7 @@ def create_records(file):
                 category = input("Category: ").ljust(20)[:20]  
                 quantity_purchase = float(input("Quantity Purchased: "))
                 lasted_purchase_price = float(input("Last Purchase Price: "))
-                lasted_date = int(input("Last Purchase Date (YYYYMMDD): "))
+                lasted_date = int(input("Last Purchase Date (DD/MM/YYYY): "))
                 amount_used = float(input("Amount: "))
 
                 if len(name.strip()) == 0:
@@ -65,7 +65,7 @@ def add_records(file):
                 category = input("Category: ").ljust(20)[:20]  
                 quantity_purchase = float(input("Quantity Purchased: "))
                 lasted_purchase_price = float(input("Last Purchase Price: "))
-                lasted_date = int(input("Last Purchase Date (YYYYMMDD): "))
+                lasted_date = int(input("Last Purchase Date (DD/MM/YYYY): "))
                 amount_used = float(input("Amount: "))
                 
                 data = struct.pack("20s20sffif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, amount_used)
@@ -146,56 +146,132 @@ def edit_record(file):
     print("Record updated successfully.")
 
 #Read
-def read_records(file) ->str:
-    check = os.path.exists(file)
-    if check != True:
-          print("Error: File Not Found!")
+def read_records(file) -> str:
+    if not os.path.exists(file):
+        print("Error: File Not Found!")
+        return
 
-    else:
-        with open(file, "rb") as file:
-                print("Result: ")
-                while True:
-                      record = file.read(struct.calcsize("20s20sffif"))
-                      if not record:
-                            break
-                      else:
-                            record = struct.unpack("20s20sffif", record)
-                            record = record[0].decode(), record[1].decode(), record[2], record[3], record[4], record[5]
-                            print(f"===============================\n Name:{record[1]}\n Category:{record[0]}\n Quantity Purchased:{record[2]:.1f}kg.\n Lasted Purchase Price:{record[3]}\n Lasted Date:1{record[4]}\n Price:{record[5]}kg.\n===============================")
-                print()
+    with open(file, "rb") as f:
+        print("Result: ")
+        print('_____________________________________________________________________________________________________________________________')
+        print(f"{'Category':<20}{'Name':<20}{'Quantity(kg)':<20}{'Purchase Price(฿/kg)':<25}{'Last Purchase Date':<25}{'Amount Used(kg)':<10}")
+        print('_____________________________________________________________________________________________________________________________')
+
+        record_format = "20s20sffif"
+        record_size = struct.calcsize(record_format)
+
+        while True:
+            record = f.read(record_size)
+            if not record:
+                break
+
+            record = struct.unpack("20s20sffif", record)
+            record = record[0].decode(), record[1].decode(), record[2], record[3], record[4], record[5]
+            print(f"{record[0]}{record[1]:<24}{record[2]:<24.2f}{record[3]:<26.2f}{record[4]:<21}{record[5]:.2f}")
+
+
+#Report
+def report(file):
+    if not os.path.exists(file):
+        print("Error: File Not Found!")
+        return
+
+    record_format = "20s20sffif"
+    record_size = struct.calcsize(record_format)
+
+    categories = {
+        'Meats': [],
+        'Seafood': [],
+        'Vegetables': [],
+        'Starch': [],
+        'Seasoning': []
+    }
+
+    with open(file, "rb") as f:
+        while True:
+            record = f.read(record_size)
+            if not record:
+                break
+            category, name, quantity_purchased, lasted_purchase_price, lasted_date, amount_used = struct.unpack(record_format, record)
+
+            category = category.decode().strip()
+            name = name.decode().strip()
+
+            if category in categories:
+                categories[category].append({
+                    'name': name,
+                    'quantity_purchased': quantity_purchased,
+                    'lasted_purchase_price': lasted_purchase_price,
+                    'amount_used': amount_used
+                })
+
+    for category, items in categories.items():
+        print(f"\n{category} Remaining")
+        print(f"{'Name':<15}{'Balance':<10}{'Value of Balance':<10}")
+        total_value = 0
+        for item in items:
+            balance = item['quantity_purchased'] - item['amount_used']
+            value_of_balance = balance * item['lasted_purchase_price']
+            total_value += value_of_balance
+            print(f"{item['name']:<15}{balance:<10.2f}{value_of_balance:<10.2f}")
+        print(f"Value of remaining is {total_value:.2f}")
+
 
 #Find
-def find_records(file) ->str:
-    check = os.path.exists(file)
-    if check != True:
-        print("Error: File Not File!")
-    else:
-        find = input("Which record are you looking for? (name, category, quantity_purchased, lasted_purchase_price, lasted_date, amount_used): ")
+def find_records(file) -> str:
+    try:
+        if not os.path.exists(file):
+            raise FileNotFoundError("Error: File Not Found!")
+        
+        find = input("Which record are you looking for? (name, category, quantity_purchased, lasted_purchase_price, lasted_date, amount_used): ").lower()
         print("Result: ")
         v_record = {}
         count = 1
-        vv = 0        
+        found_records = 0
 
-        with open(file, "rb") as file:
-                while True:
-                      record = file.read(struct.calcsize("20s20sffif"))
-                      if not record:
-                            break
-                      else:
-                        record = struct.unpack("20s20sffif", record)
-                        record = record[0].decode(), record[1].decode(), record[2], record[3], record[4], record[5]
-                        v_record[count] = (f"===============================\n Name:{record[1]}\n Category:{record[0]}\n Quantity Purchased:{record[2]:.1f}kg.\n Lasted Purchase Price:{record[3]}\n Lasted Date:{record[4]}\n Price:{record[5]}kg.\n===============================")
-                        count += 1
+        print('_____________________________________________________________________________________________________________________________')
+        print(f"{'Category':<20}{'Name':<20}{'Quantity(kg)':<20}{'Purchase Price(฿/kg)':<25}{'Last Purchase Date':<25}{'Amount Used(kg)':<10}")
+        print('_____________________________________________________________________________________________________________________________')    
 
-                for key, value in v_record.items():
-                      if find in value:
-                        print(value)
-                        vv += 1
-                      else:
-                        continue
-                if vv == 0:
-                      print(f"Not found  [{find}] in any records")
-                print()
+        with open(file, "rb") as f:
+            record_format = "20s20sffif"
+            record_size = struct.calcsize(record_format)
+
+            while True:
+                record = f.read(record_size)
+                if not record:
+                    break
+
+                try:
+                    unpacked = struct.unpack(record_format, record)
+                except struct.error as e:
+                    raise ValueError(f"Data unpacking error: {e}")
+
+                record = struct.unpack("20s20sffif", record)
+                record = record[0].decode(), record[1].decode(), record[2], record[3], record[4], record[5]
+
+                v_record[count] = (
+                    f"{record[0]}{record[1]:<24}{record[2]:<24.2f}{record[3]:<26.2f}{record[4]:<21}{record[5]:.2f}"
+                )
+                count += 1
+
+        for key, value in v_record.items():
+            if find in value.lower():
+                print(value.upper())
+                found_records += 1
+
+        if found_records == 0:
+            print(f"Not found: [{find}] in any records")
+        print()
+
+    except FileNotFoundError as fnf_error:
+        print(fnf_error)
+
+    except ValueError as ve:
+        print(f"ValueError: {ve}")
+
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
 #Remove
 def remove_record(file):

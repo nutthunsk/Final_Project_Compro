@@ -3,13 +3,13 @@ import Example_data as md
 def Run():
     runing = True
 
-    print("======= Welcome! =======\n")
+    print("_______ Welcome! _______\n")
     file = input("File Path: ")
-    print("_____________________________\n1.Create records\n2.Add records\n3.Edit record(unfinished)\n4.Show records\n5.Find record\n6.Remove record(unfinished)\n7.Delete file record\n8.Exit\n_____________________________")
+    print("_____________________________\n1.Create records\n2.Add records\n3.Edit record\n4.Show records\n5.Report record\n6.Find record\n7.Remove record\n8.Delete file record\n9.Exit\n_____________________________")
     while runing:
-        choice = input("Action (1-8): ")
+        choice = input("Action (1-9): ")
 
-        if choice not in ["1", "2", "3", "4", "5", "6", "7","8"]:
+        if choice not in ["1", "2", "3", "4", "5", "6", "7","8","9"]:
             print("Error: ValueError")
             runing = False
         else:
@@ -23,12 +23,14 @@ def Run():
                 case "4":
                     md.read_records(file)
                 case"5":
-                    md.find_records(file)
+                    md.report(file)
                 case "6":
-                    md.remove_record(file)
+                    md.find_records(file)
                 case "7":
-                    md.delete_record(file)
+                    md.remove_record(file)
                 case "8":
+                    md.delete_record(file)
+                case "9":
                     print("Exiting program...")
                     break
 
