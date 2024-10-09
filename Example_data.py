@@ -144,7 +144,7 @@ def read_records(file) -> str:
     with open(file, "rb") as f:
         print("Result: ")
         print('_____________________________________________________________________________________________________________________________')
-        print(f"{'Category':<20}{'Name':<20}{'Quantity(kg)':<20}{'Purchase Price(฿/kg)':<25}{'Last Purchase Date':<25}{'Amount Used(kg)':<10}")
+        print(f"{'Category':<20}{'Name':<20}{'Quantity(kg)':<20}{'Purchase Price(฿/k.g.)':<25}{'Last Purchase Date':<25}{'Amount Used(k.g.)':<10}")
         print('_____________________________________________________________________________________________________________________________')
 
         record_format = "20s20sffif"
@@ -194,7 +194,7 @@ def report(file):
 
     print("\nInventory Report")
     print('___________________________________________________________________________________________________')
-    print(f"{'Category':<20}{'Name':<20}{'Remaining Quantity (kg)':<35}{'Value of Remaining (฿)'}")
+    print(f"{'Category':<20}{'Name':<20}{'Remaining Quantity (k.g.)':<35}{'Value of Remaining (฿)'}")
     print('___________________________________________________________________________________________________')
 
     for category, data in total_values.items():
