@@ -85,8 +85,8 @@ def edit_record(file):
         print("Error: File Not Found!")
         return
 
-    records = []  
-    record_size = struct.calcsize("20s20sffif")  
+    records = []
+    record_size = struct.calcsize("20s20sffif")
 
     with open(file, "rb") as file_obj:
         while True:
@@ -95,11 +95,19 @@ def edit_record(file):
                 break
             records.append(struct.unpack("20s20sffif", record))
 
+    if not records:
+        print("No records to edit.")
+        return
+
     print("Current Records:")
     for idx, record in enumerate(records):
         name = record[1].decode().strip()
         category = record[0].decode().strip()
-        print(f"{idx + 1}: [Name: {name}, Category: {category}]")
+        quantity_purchase = record[2]
+        lasted_purchase_price = record[3]
+        lasted_date = record[4]
+        amount_used = record[5]
+        print(f"{idx + 1}: [{category} {name} {quantity_purchase} {lasted_purchase_price} {lasted_date} {amount_used:.2f}]")
 
     try:
         index = int(input("Enter the record number you want to edit: ")) - 1
@@ -110,30 +118,57 @@ def edit_record(file):
         print("Error: Invalid input. Please enter a number.")
         return
 
-    record_to_edit = records[index]
+    record_to_edit = list(records[index])
 
-    print("Editing record:")
-    name = input(f"New Name (current: {record_to_edit[1].decode().strip()}): ").ljust(20)[:20] or record_to_edit[1].decode().strip()
-    category = input(f"New Category (current: {record_to_edit[0].decode().strip()}): ").ljust(20)[:20] or record_to_edit[0].decode().strip()
-    
-    try:
-        quantity_purchase = float(input(f"New Quantity Purchased (current: {record_to_edit[2]:.2f}): ") or record_to_edit[2])
-        lasted_purchase_price = float(input(f"New Last Purchase Price (current: {record_to_edit[3]:.2f}): ") or record_to_edit[3])
-        lasted_date = int(input(f"New Last Purchase Date (current: {record_to_edit[4]}): ") or record_to_edit[4])
-        amount_used = float(input(f"New Amount Used (current: {record_to_edit[5]:.2f}): ") or record_to_edit[5])
-    except ValueError as e:
-        print(f"Error: Invalid input. {e}")
-        return
+    fields = ["Category", "Name", "Quantity Purchased", "Last Purchase Price", "Last Purchase Date", "Amount Used"]
 
-    updated_record = struct.pack("20s20sffif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, amount_used)
-    records[index] = struct.unpack("20s20sffif", updated_record)
+    while True:
+        print("\nFields available for editing:")
+        for i, field in enumerate(fields, 1):
+            print(f"{i}. {field}")
+
+        print("7. Done (Finish editing)")
+
+        choice = input("Select the field to edit (1-6) or '7' to finish: ")
+
+        if choice == '7':
+            break
+
+        if choice in [str(i) for i in range(1, 7)]:
+            field_index = int(choice) - 1
+            current_value = record_to_edit[field_index]
+
+            if field_index == 0 or field_index == 1: 
+                new_value = input(f"New {fields[field_index]} (current: {current_value.decode().strip()}): ").strip()
+                if new_value:
+                    record_to_edit[field_index] = new_value.encode().ljust(20)[:20]
+
+            elif field_index in {2, 3, 5}:
+                try:
+                    new_value = input(f"New {fields[field_index]} (current: {current_value:.2f}): ").strip()
+                    if new_value:
+                        record_to_edit[field_index] = float(new_value)
+                except ValueError:
+                    print("Error: Invalid input. Please enter a valid number.")
+
+            elif field_index == 4: 
+                try:
+                    new_value = input(f"New {fields[field_index]} (current: {current_value}): ").strip()
+                    if new_value:
+                        record_to_edit[field_index] = int(new_value)
+                except ValueError:
+                    print("Error: Invalid input. Please enter a valid integer.")
+        else:
+            print("Invalid option. Please select a valid field number.")
 
     with open(file, "wb") as file_obj:
         for record in records:
-            file_obj.write(struct.pack("20s20sffif", *record))
+            if record == records[index]:
+                file_obj.write(struct.pack("20s20sffif", *record_to_edit))
+            else:
+                file_obj.write(struct.pack("20s20sffif", *record))
 
     print("Record updated successfully.")
-
 
 #Read
 def read_records(file) -> str:
