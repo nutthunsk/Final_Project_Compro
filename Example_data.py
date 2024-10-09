@@ -1,6 +1,6 @@
 import struct, os
 """
-[name, category, quantity_purchased, lasted_purchase_price, lasted_date, price]
+[name, category, quantity_purchased, lasted_purchase_price, lasted_date, amount_used]
 """
 
 #Create
@@ -25,13 +25,13 @@ def create_records(file):
                 quantity_purchase = float(input("Quantity Purchased: "))
                 lasted_purchase_price = float(input("Last Purchase Price: "))
                 lasted_date = int(input("Last Purchase Date (YYYYMMDD): "))
-                price = float(input("Price: "))
+                amount_used = float(input("Amount: "))
 
                 if len(name.strip()) == 0:
                     print("Error: Name cannot be empty.")
                     return
 
-                data = struct.pack("20s20sffif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, price)
+                data = struct.pack("20s20sffif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, amount_used)
                 file_obj.write(data)  
             except ValueError as e:
                 print(f"Error: Invalid input. {e}")  
@@ -66,9 +66,9 @@ def add_records(file):
                 quantity_purchase = float(input("Quantity Purchased: "))
                 lasted_purchase_price = float(input("Last Purchase Price: "))
                 lasted_date = int(input("Last Purchase Date (YYYYMMDD): "))
-                price = float(input("Price: "))
+                amount_used = float(input("Amount: "))
                 
-                data = struct.pack("20s20sffif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, price)
+                data = struct.pack("20s20sffif", category.encode(), name.encode(), quantity_purchase, lasted_purchase_price, lasted_date, amount_used)
                 file_obj.write(data)  
             except ValueError as e:
                 print(f"Error: {e}")
@@ -122,14 +122,14 @@ def edit_record(file):
     new_quantity_purchase = float(input(f"New Quantity Purchased (current: {record_to_edit[2]}): "))
     new_lasted_purchase_price = float(input(f"New Lasted Purchase Price (current: {record_to_edit[3]}): "))
     new_lasted_date = int(input(f"New Lasted Date (current: {record_to_edit[4]}): "))
-    new_price = float(input(f"New Price (current: {record_to_edit[5]}): "))
+    new_amount_used = float(input(f"New Amount Used (current: {record_to_edit[5]}): "))
 
     new_name = new_name if new_name.strip() else name.ljust(20)[:20]
     new_category = new_category if new_category.strip() else category.ljust(20)[:20]
     new_quantity_purchase = (new_quantity_purchase) if new_quantity_purchase else record_to_edit[2]
     new_lasted_purchase_price = (new_lasted_purchase_price) if new_lasted_purchase_price else record_to_edit[3]
     new_lasted_date = new_lasted_date if new_lasted_date else record_to_edit[4]
-    new_price = new_price if new_price else record_to_edit[5]
+    new_amount_used = new_amount_used if new_amount_used else record_to_edit[5]
 
     records[index] = (
         new_category.encode(),
@@ -137,7 +137,7 @@ def edit_record(file):
         new_quantity_purchase,
         new_lasted_purchase_price,
         new_lasted_date,
-        new_price)
+        new_amount_used)
 
     with open(file, "wb") as file_obj:
         for record in records:
@@ -161,7 +161,7 @@ def read_records(file) ->str:
                       else:
                             record = struct.unpack("20s20sffif", record)
                             record = record[0].decode(), record[1].decode(), record[2], record[3], record[4], record[5]
-                            print(f"===============================\n Name:{record[1]}\n Category:{record[0]}\n Quantity Purchased:{record[2]:.1f}kg.\n Lasted Purchase Price:{record[3]}\n Lasted Date:1{record[4]}\n Price:{record[5]}฿\n===============================")
+                            print(f"===============================\n Name:{record[1]}\n Category:{record[0]}\n Quantity Purchased:{record[2]:.1f}kg.\n Lasted Purchase Price:{record[3]}\n Lasted Date:1{record[4]}\n Price:{record[5]}kg.\n===============================")
                 print()
 
 #Find
@@ -170,7 +170,7 @@ def find_records(file) ->str:
     if check != True:
         print("Error: File Not File!")
     else:
-        find = input("Which record are you looking for? (name, category, quantity_purchased, lasted_purchase_price, lasted_date, price): ")
+        find = input("Which record are you looking for? (name, category, quantity_purchased, lasted_purchase_price, lasted_date, amount_used): ")
         print("Result: ")
         v_record = {}
         count = 1
@@ -184,7 +184,7 @@ def find_records(file) ->str:
                       else:
                         record = struct.unpack("20s20sffif", record)
                         record = record[0].decode(), record[1].decode(), record[2], record[3], record[4], record[5]
-                        v_record[count] = (f"===============================\n Name:{record[1]}\n Category:{record[0]}\n Quantity Purchased:{record[2]:.1f}kg.\n Lasted Purchase Price:{record[3]}\n Lasted Date:{record[4]}\n Price:{record[5]}฿\n===============================")
+                        v_record[count] = (f"===============================\n Name:{record[1]}\n Category:{record[0]}\n Quantity Purchased:{record[2]:.1f}kg.\n Lasted Purchase Price:{record[3]}\n Lasted Date:{record[4]}\n Price:{record[5]}kg.\n===============================")
                         count += 1
 
                 for key, value in v_record.items():
